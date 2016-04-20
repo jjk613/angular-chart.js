@@ -88,6 +88,7 @@
       return {
         restrict: 'CA',
         scope: {
+          inputdata: "=",
           data: '=?',
           labels: '=?',
           options: '=?',
@@ -189,6 +190,7 @@
             var data = Array.isArray(scope.data[0]) ?
               getDataSets(scope.labels, scope.data, scope.series || [], colours) :
               getData(scope.labels, scope.data, colours);
+            updateInputdata(data);
             var options = angular.extend({}, ChartJs.getOptions(type), scope.options);
 
             // Destroy old chart if it exists to avoid ghost charts issue
@@ -210,6 +212,12 @@
               if (!! scope[attr]) {
                 warn.call(console, '"%s" is deprecated and will be removed in a future version. ' +
                   'Please use "chart-%s" instead.', attr, attr);
+              }
+              // Set inputdata in the directive (parent) scope, so that it may be retrieved in the chartPie element
+              // that implements this directive (e.g. with class="chart-pie") in main.html.
+              // There it is bound to the controller scope object 'chartDataObject' using the attribute inputdata="chartDataObject".
+              function updateInputdata(newData){
+                scope.inputdata = newData;
               }
             }
           }
